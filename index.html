@@ -3,31 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
+    <meta name="description" content="Play the modern Tic Tac Toe game with an interactive and visually appealing interface.">
+    <meta name="author" content="vinayan00123">
+    <title>Tic Tac Toe Game</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Add glass morphism effect and basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        .cell {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cell:hover {
+            background-color: rgba(255, 255, 0, 0.8);
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>TIC TAC TOE</h1>
-        <div id="registration-form" class="form">
-            <input type="text" id="player1" placeholder="Enter Player 1 Name" required>
-            <input type="text" id="player2" placeholder="Enter Player 2 Name" required>
-            <button id="start-game">Start Game</button>
+        <h1>Tic Tac Toe</h1>
+        <div id="turn-indicator">Current Turn: <span id="current-player">X</span></div>
+        <div class="board" id="game-board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
         </div>
-        <div id="game-mode" class="form" style="display: none;">
-            <h2>Choose Game Mode</h2>
-            <button id="player-vs-player">Player vs Player</button>
-            <button id="player-vs-computer">Player vs Computer</button>
+        <div id="scoreboard">
+            <p>Scoreboard:</p>
+            <p>X: <span id="score-x">0</span> | O: <span id="score-o">0</span></p>
         </div>
-        <div id="game-board" style="display: none;">
-            <h2>Game Board</h2>
-            <div id="board" class="board"></div>
-            <div id="scoreboard" class="scoreboard"></div>
-       </div>
-        <div id="restart-game;">
-            <button id="restart-game" style="display: none;">Restart Game</button>
-        </div>
+        <button id="reset-button">Reset Game</button>
     </div>
-    <script src="script.js"></script>
+    <footer>
+        <p>&copy; 2026 Tic Tac Toe by vinayan00123. All rights reserved.</p>
+    </footer>
+    <script>
+        // JavaScript for game logic, turn management, and reset functionality
+        const cells = document.querySelectorAll('.cell');
+        const currentPlayerDisplay = document.getElementById('current-player');
+        const scoreXDisplay = document.getElementById('score-x');
+        const scoreODisplay = document.getElementById('score-o');
+        const resetButton = document.getElementById('reset-button');
+        let currentPlayer = 'X';
+        let scoreX = 0;
+        let scoreO = 0;
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => handleCellClick(cell));
+        });
+
+        resetButton.addEventListener('click', resetGame);
+
+        function handleCellClick(cell) {
+            if (cell.textContent === '') {
+                cell.textContent = currentPlayer;
+                if (checkWinner()) {
+                    alert(`${currentPlayer} wins!`);
+                    updateScore();
+                    resetGame();
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    currentPlayerDisplay.textContent = currentPlayer;
+                }
+            }
+        }
+
+        function checkWinner() {
+            // Winning combinations
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            return winningCombinations.some(combination => {
+                const [a, b, c] = combination;
+                return cells[a].textContent === currentPlayer && 
+                       cells[b].textContent === currentPlayer && 
+                       cells[c].textContent === currentPlayer;
+            });
+        }
+
+        function updateScore() {
+            if (currentPlayer === 'X') {
+                scoreX++;
+                scoreXDisplay.textContent = scoreX;
+            } else {
+                scoreO++;
+                scoreODisplay.textContent = scoreO;
+            }
+        }
+
+        function resetGame() {
+            cells.forEach(cell => cell.textContent = '');
+            currentPlayer = 'X';
+            currentPlayerDisplay.textContent = currentPlayer;
+        }
+    </script>
 </body>
 </html>
